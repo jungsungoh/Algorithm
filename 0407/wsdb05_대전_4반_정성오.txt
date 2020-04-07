@@ -1,0 +1,76 @@
+1. empì dept tableì joiníì¬ ì´ë¦, ê¸ì¬, ë¶ìëªì ê²ìíì¸ì
+select ename, sal, dname
+from emp,dept
+where emp.deptno = dept.deptno;
+
+2. ì´ë¦ì´ 'KING'ì¸ ì¬ìì ë¶ìëªì ê²ìíì¸ì.
+select dname
+from dept
+where deptno = (select deptno from emp where ename = 'KING');
+
+3. dept tableì ìë ëª¨ë  ë¶ìë¥¼ ì¶ë ¥íê³ , emp tableì ìë dataì joiníì¬ ëª¨ë  ì¬ìì ì´ë¦, ë¶ìë²í¸, ë¶ìëª, ê¸ì¬ë¥¼ ì¶ë ¥í´ë¼.
+select ename, empno, dname,sal
+from emp right outer join dept 
+on emp.deptno = dept.deptno;
+
+4. emp tableì ìë empnoì mgrì ì´ì©íì¬ ìë¡ì ê´ê³ë¥¼ ë¤ìê³¼ ê°ì´ ì¶ë ¥ëëë¡, ì¿¼ë¦¬ë¥¼ ìì±íì¸ì. 'SCOTTì ë§¤ëì ë JONESì´ë¤'
+select concat(a.ename,"ì ë§¤ëì ë ", b.ename," ì´ë¤") as result
+from emp a, emp b
+where a.mgr = b.empno;
+
+
+5. 'SCOTT'ì ì§ë¬´ì ê°ì ì¬ëì ì´ë¦, ë¶ìëª, ê¸ì¬, ì§ë¬´ë¥¼ ê²ìíì¸ì.
+select ename, dname, sal, job
+from emp inner join dept on emp.deptno = dept.deptno
+where job = (select job from emp where ename = 'SCOTT');
+
+6. 'SCOTT' ê° ìí´ìë ë¶ìì ëª¨ë  ì¬ëì ì¬ìë²í¸, ì´ë¦, ìì¬ì¼, ê¸ì¬ë¥¼ ê²ìíì¸ì
+select empno, ename, hiredate, sal
+from emp
+where deptno = (select deptno from emp where ename = 'SCOTT');
+
+7. ì ì²´ ì¬ìì íê· ê¸ì¬ë³´ë¤ ê¸ì¬ê° ë§ì ì¬ìì ì¬ìë²í¸, ì´ë¦, ë¶ìëª, ìì¬ì¼, ì§ì­, ê¸ì¬ë¥¼ ê²ìíì¸ì
+select empno, ename, dname, hiredate, loc, sal
+from emp left outer join dept on emp.deptno = dept.deptno
+where sal >= (select avg(sal) from emp);
+
+8. 30ë² ë¶ìì ê°ì ì¼ì íë ì¬ìì ì¬ìë²í¸, ì´ë¦, ë¶ìëª, ì§ì­, ê¸ì¬ë¥¼ ê¸ì¬ê° ë§ì ìì¼ë¡ ê²ìíì¸ì
+select empno, ename, dname, loc, sal
+from emp left outer join dept on emp.deptno = dept.deptno
+where job in (select job from emp where deptno = 30)
+order by sal desc;
+
+9. 10ë² ë¶ì ì¤ìì 30ë² ë¶ììë ìë ìë¬´ë¥¼ íë ì¬ìì ì¬ìë²í¸, ì´ë¦, ë¶ìëª, ìì¬ì¼, ì§ì­ì ê²ìíì¸ì.
+select empno, ename, dname, hiredate, loc
+from emp left outer join dept on emp.deptno = dept.deptno
+where job not in (select job from emp where deptno = 30);
+
+10. âKINGâì´ë âJAMES'ì ê¸ì¬ì ê°ì ì¬ìì ì¬ìë²í¸, ì´ë¦,ê¸ì¬ë¥¼ ê²ìíì¸ì.
+select empno, ename, sal
+from emp
+where sal = (select sal from emp where ename = 'king')
+or sal = (select sal from emp where ename = 'james')
+
+11. ê¸ì¬ê° 30ë² ë¶ìì ìµê³ ê¸ì¬ë³´ë¤ ëì ì¬ìì ì¬ìë²í¸, ì´ë¦, ê¸ì¬ë¥¼ ê²ìíì¸ì
+select empno, ename, sal
+from emp
+where sal> (select max(sal) from emp where deptno = 30);
+
+12. ì´ë¦ ê²ìì ë³´ë¤ ë¹ ë¥´ê² ìííê¸° ìí´ empíì´ë¸ enameì ì¸ë±ì¤ë¥¼ ìì±íìì¤.
+create index idxename on emp(ename);
+
+13. ì´ë¦ì´ 'ALLEN'ì¸ ì¬ìì ìì¬ì°ëê° ê°ì ì¬ìë¤ì ì´ë¦ê³¼ ê¸ì¬ë¥¼ ì¶ë ¥íì¸ì.
+select ename, sal
+from emp
+where hiredate = (select hiredate from emp where ename = 'ALLEN');
+
+14. ë¶ìë³ ê¸ì¬ì í©ê³ë¥¼ ì¶ë ¥íë viewë¥¼ ìì±íì¸ì
+create view dept_sal
+as 
+select deptno, sum(sal) sal
+from emp group by deptno
+order by sal;
+
+15. 14ë²ìì ìì±ë Viewë¥¼ ì´ì©íì¬ ë¶ìë³ ê¸ì¬ì í©ê³ê° í° 1~3ìì
+ë¥¼ ì¶ë ¥íì¸ì.
+select * from dept_sal limit 3;
