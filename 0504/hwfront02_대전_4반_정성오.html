@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<style type="text/css">
+#space {
+	border: 1px solid gray;
+	height : 200px;
+	width: 350px;
+	text-align: center;
+	background-color:#00D8FF;
+}
+
+.num {
+	border: 1px solid gray;
+	text-align: center;
+	background-color: #FAED7D;
+	line-height: 200px;
+	margin-right : 20px;
+	padding : 10px;
+}
+</style>
+<script	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+	$(document).ready(function() {
+		var arr = new Array();
+		function make_num() {
+			for (var i = 0; i < 6; i++) {
+				while (true) {
+					var number = Math.floor(Math.random() * 45) + 1;
+					if (arr.includes(number)) {
+					} else {
+						arr[i] = number;
+						break;
+					}
+				}
+				
+			}
+		}
+		make_num();
+		var time = 0;
+		var result = "";
+		start = setInterval(function(){
+			$("#space").html(result);
+			result += '<span class = "num rounded-circle">' + arr[time] + '</span>';
+			time++;
+			if(time==7){
+				clearInterval(start);
+			}
+		}, 1000);
+	});
+
+</script>
+</head>
+<body>
+	<h2>ëë°ì ê¸°ìí©ëë¤~~</h2>
+	<div id = "space">
+	</div>
+</body>
+</html>
