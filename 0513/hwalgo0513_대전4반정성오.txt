@@ -1,0 +1,48 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.StringTokenizer;
+
+public class Main {
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		String l1 = br.readLine();
+		int n = Integer.parseInt(l1.split(" ")[0]);
+		int m = Integer.parseInt(l1.split(" ")[1]);
+		
+		ArrayList<Integer>[] al = new ArrayList[n+1];
+		StringBuilder sb = new StringBuilder();
+		int[] pointed_cnt = new int[n+1];
+		for(int i=1; i<=n; i++) {
+			al[i] = new ArrayList<>();
+		}
+		
+		for(int i=0; i<m;i ++) {
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			int v1 = Integer.parseInt(st.nextToken());
+			int v2 = Integer.parseInt(st.nextToken());
+			al[v1].add(v2);
+			pointed_cnt[v2]++;
+		}
+		Queue<Integer> q = new LinkedList<>();
+		for(int i=1; i<=n; i++) {
+			if(pointed_cnt[i] == 0) q.add(i);
+		}
+		
+		while(!q.isEmpty()) {
+			int cur = q.poll();
+			sb.append(cur + " ");
+			for(int i=0; i<al[cur].size(); i++) {
+				int next = al[cur].get(i);
+				pointed_cnt[next]--;
+				if(pointed_cnt[next] == 0) {
+					q.add(next);
+				}
+			}
+		}
+		System.out.println(sb.toString());
+	}
+}
