@@ -12,13 +12,28 @@ public class Mun_스택수열 {
 		int n = Integer.parseInt(br.readLine());
 		Stack<Integer> st = new Stack<>();
 		int pr = 1;
+		StringBuffer sb = new StringBuffer();
 		for(int i=0; i<n; i++) {
 			int num = Integer.parseInt(br.readLine());
-			while(true) {
-				if(st.isEmpty() || (!st.isEmpty() && num >= st.peek())) {
+			while(pr> num && !st.isEmpty() && st.peek() != num) {
+				st.pop();
+				sb.append("-");
+				sb.append("-");
+			}
+			while(pr<=num) {
 					st.push(pr++);
-				}
+					sb.append("+");
+					sb.append("\n");
+			}
+			if(!st.isEmpty() && st.peek() == num) {
+				st.pop();
+				sb.append("-");
+				sb.append("\n");
+			}else{
+				System.out.println("NO");
+				return;
 			}
 		}
+		System.out.println(sb.toString());
 	}
 }
