@@ -31,30 +31,24 @@ public class Mun_스티커붙이기 {
 		}
 		for(int t=0; t<k; t++) {
 			int flag2 = 0;
-			for(int i=0; i<n; i++) {
-				for(int j=0; j<m; j++) {
-					int[][] tmp1 = al.get(t);
-					for(int p = 0; p<3; p++) {
+			int[][] tmp1 = al.get(t);
+			for(int p =0; p<4; p++) {
+				for(int i=0; i<n; i++) {
+					for(int j=0; j<m; j++) {
 						int[][] tmp = stic(i,j,tmp1);
-						if(tmp == null) {
-							tmp1 = rotate(tmp1,90);
-							print(tmp1);
-							System.out.println("?????????????????");
-						}else {
-							System.out.println("k = " +t );
+						if(tmp != null) {
 							main = tmp;
-							print(main);
-							System.out.println("===========");
 							flag2 = 1;
 							break;
 						}
 					}
-					if(flag2 == 1) {break;}
+					if(flag2 ==1) { break;}
 				}
 				if(flag2 == 1) {break;}
+				tmp1 = rotate(tmp1, 90);
 			}
 		}
-		
+
 		int cnt=0;
 		for(int i=0; i<n; i++) {
 			for(int j=0; j<m; j++) {
@@ -65,7 +59,6 @@ public class Mun_스티커붙이기 {
 		}
 		System.out.println(cnt);
 	}
-	// 배열 회전 90, 180, 270, 360
 	public static int[][] rotate(int[][] arr, int degree) {
 		int[][] rotate = null;
 		int n = arr.length;
@@ -84,21 +77,19 @@ public class Mun_스티커붙이기 {
 			for(int j=0; j<rotate[i].length; j++) {
 				switch(degree) {
 				case 90:
-						rotate[i][j] = arr[n-1-j][i];
-						break;
+					rotate[i][j] = arr[n-1-j][i];
+					break;
 				case 180:
-						rotate[i][j] = arr[n-1-i][m-1-j];
-						break;
+					rotate[i][j] = arr[n-1-i][m-1-j];
+					break;
 				case 270:
-						rotate[i][j] = arr[j][m-1-i];
-						break;
+					rotate[i][j] = arr[j][m-1-i];
+					break;
 				}
 			}
 		}
 		return rotate;
 	}
-	// 겹치는 부분이 1이면 x
-	// 
 	public static int[][] stic(int si, int sj, int[][] arr) {
 		int[][] val = new int[main.length][];
 		for(int i=0; i<main.length; i++) {
@@ -120,13 +111,13 @@ public class Mun_스티커붙이기 {
 		return val;
 	}
 	public static void print(int[][] arr) {
-	        for (int i=0; i<arr.length; i++) {
-	            for (int j=0; j<arr[i].length; j++) {
-	                System.out.print(arr[i][j] + " ");
-	            }
-	            System.out.println();
-	        }
-	    }
+		for (int i=0; i<arr.length; i++) {
+			for (int j=0; j<arr[i].length; j++) {
+				System.out.print(arr[i][j] + " ");
+			}
+			System.out.println();
+		}
+	}
 }
 
 

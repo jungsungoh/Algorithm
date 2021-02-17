@@ -66,7 +66,17 @@ public class Mun_불 {
 		visited2[si][sj] = 0;
 		
 		while(!q.isEmpty()) {
-			
+			point p = q.poll();
+			for(int k=0; k<4; k++) {
+				int ni = p.x+di[k];
+				int nj = p.y+dj[k];
+				if(ni>=0 && ni<n && nj>=0 && nj<m) {
+					if(visited2[ni][nj] == 0 && arr[ni][nj] == '.') {
+						q.add(new point(ni,nj));
+						visited2[ni][nj] = visited2[p.x][p.y]+1; 
+					}
+				}
+			}
 		}
 	}
 	public static class point{
