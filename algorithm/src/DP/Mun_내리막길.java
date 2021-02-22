@@ -28,6 +28,5 @@ public class Mun_내리막길 {
 			for(int j=0; j<n; j++) {
 			}
 		}
-		
 	}
 }
