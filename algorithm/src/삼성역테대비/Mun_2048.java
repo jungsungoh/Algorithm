@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.Stack;
 import java.util.StringTokenizer;
 
 public class Mun_2048 {
@@ -22,11 +23,11 @@ public class Mun_2048 {
 				arr[i][j] = Integer.parseInt(st.nextToken());
 			}
 		}
-		
+
 		dfs(arr, 0);
 		System.out.println(result);
 	}
-	 
+
 	public static void dfs(int[][] temp, int cnt) {
 		if(cnt == 5) {
 			int max = 0;
@@ -35,11 +36,10 @@ public class Mun_2048 {
 					max = Math.max(max, temp[i][j]);
 				}
 			}
-			print(temp);
 			result = Math.max(max,  result);
 			return;
 		}
-		
+
 		for(int i=0; i<4; i++) {
 			int[][] tmp = new int[n][n];
 			for(int j=0; j<n; j++) {
@@ -48,130 +48,113 @@ public class Mun_2048 {
 			move(i, tmp);
 			dfs(tmp,cnt+1);
 		}
-		
-		
-	}
-	public static void print(int[][] printarr) {
-		for(int i=0; i<n; i++) {
-			for(int j=0; j<n; j++) {
-				System.out.print(printarr[i][j] + " ");
-			}System.out.println();
-		}
-		System.out.println("======================");
+
+
 	}
 	public static void move(int dir, int[][] tmp) { // 방향
-		visited = new boolean[n][n];
 		if(dir == 0) { // 위
-			for(int i=0; i<n; i++) {
-				for(int j=0; j<n; j++) {
+			for(int j=0; j<n; j++) {
+				Stack<Integer> st = new Stack<>();
+				boolean flag = true;
+				for(int i=0; i<n; i++) {
 					if(tmp[i][j] != 0) {
-						int ni = i, nj = j;
-						while(true) {
-							int si= ni, sj = nj;
-							ni = ni + di[dir];
-							nj = nj + dj[dir];
-							if(ni>=0 && ni<n && nj>=0 && nj<n) {
-								if(tmp[ni][nj] ==0) {
-									tmp[ni][nj] = tmp[si][sj];
-									tmp[si][sj] = 0;
-								}else if(tmp[ni][nj] == tmp[si][sj]  && !visited[ni][nj]) {
-									tmp[ni][nj]*=2;
-									tmp[si][sj] = 0;
-									visited[ni][nj] = true;
-								}else {
-									break;
-								}
+						if(st.isEmpty()) {
+							st.add(tmp[i][j]);
+						}else {
+							if(st.peek() == tmp[i][j] && flag) {
+								st.push(st.pop()*2);
+								flag = false;
 							}else {
-								break;
+								st.push(tmp[i][j]);
+								flag = true;
 							}
 						}
 					}
 				}
+				while(!st.isEmpty()) {
+					int idx = st.size()-1;
+					tmp[idx][j] = st.pop(); 
+				}
 			}
-			
+
 		}else if(dir == 1) { // 아래
-			for(int i=n-1; i>=0 ; i--) {
-				for(int j=0; j<n; j++) {
+			for(int j=0; j<n; j++) {
+				Stack<Integer> st = new Stack<>();
+				boolean flag = true;
+				for(int i=n-1; i>=0 ; i--) {
 					if(tmp[i][j] != 0) {
-						int ni = i, nj = j;
-						while(true) {
-							int si= ni, sj = nj;
-							ni = ni + di[dir];
-							nj = nj + dj[dir];
-							if(ni>=0 && ni<n && nj>=0 && nj<n) {
-								if(tmp[ni][nj] ==0) {
-									tmp[ni][nj] = tmp[si][sj];
-									tmp[si][sj] = 0;
-								}else if(tmp[ni][nj] == tmp[si][sj]  && !visited[ni][nj]) {
-									tmp[ni][nj]*=2;
-									tmp[si][sj] = 0;
-									visited[ni][nj] = true;
-								}else {
-									break;
-								}
+						if(st.isEmpty()) {
+							st.add(tmp[i][j]);
+						}else {
+							if(st.peek() == tmp[i][j] && flag) {
+								st.push(st.pop()*2);
+								flag = false;
 							}else {
-								break;
+								st.push(tmp[i][j]);
+								flag = true;
 							}
 						}
 					}
+				}
+				while(!st.isEmpty()) {
+					int idx = n-st.size();
+					tmp[idx][j] = st.pop(); 
 				}
 			}
 		}else if(dir == 2) { // 왼쪽
-			for(int j=0; j<n; j++) {
-				for(int i=0; i<n; i++) {
+			for(int i=0; i<n; i++) {
+				Stack<Integer> st = new Stack<>();
+				boolean flag = true;
+				for(int j=0; j<n; j++) {
 					if(tmp[i][j] != 0) {
-						int ni = i, nj = j;
 						while(true) {
-							int si= ni, sj = nj;
-							ni = ni + di[dir];
-							nj = nj + dj[dir];
-							if(ni>=0 && ni<n && nj>=0 && nj<n) {
-								if(tmp[ni][nj] ==0) {
-									tmp[ni][nj] = tmp[si][sj];
-									tmp[si][sj] = 0;
-								}else if(tmp[ni][nj] == tmp[si][sj]  && !visited[ni][nj]) {
-									tmp[ni][nj]*=2;
-									tmp[si][sj] = 0;
-									visited[ni][nj] = true;
-								}else {
-									break;
-								}
+							if(st.isEmpty()) {
+								st.add(tmp[i][j]);
 							}else {
-								break;
+								if(st.peek() == tmp[i][j] && flag) {
+									st.push(st.pop()*2);
+									flag = false;
+								}else {
+									st.push(tmp[i][j]);
+									flag = true;
+								}
 							}
 						}
 					}
+				}
+				while(!st.isEmpty()) {
+					int idx = st.size() -1;
+					tmp[i][idx] = st.pop(); 
 				}
 			}
 		}else if(dir == 3) {
-			for(int j=n-1; j>=0 ; j--) {
-				for(int i=0; i<n; i++) {
+			for(int i=0; i<n; i++) {
+				Stack<Integer> st = new Stack<>();
+				boolean flag = true;
+				for(int j=n-1; j>=0 ; j--) {
 					if(tmp[i][j] != 0) {
-						int ni = i, nj = j;
 						while(true) {
-							int si= ni, sj = nj;
-							ni = ni + di[dir];
-							nj = nj + dj[dir];
-							if(ni>=0 && ni<n && nj>=0 && nj<n) {
-								if(tmp[ni][nj] ==0) {
-									tmp[ni][nj] = tmp[si][sj];
-									tmp[si][sj] = 0;
-								}else if(tmp[ni][nj] == tmp[si][sj]  && !visited[ni][nj]) {
-									tmp[ni][nj]*=2;
-									tmp[si][sj] = 0;
-									visited[ni][nj] = true;
-								}else {
-									break;
-								}
+							if(st.isEmpty()) {
+								st.add(tmp[i][j]);
 							}else {
-								break;
+								if(st.peek() == tmp[i][j] && flag) {
+									st.push(st.pop()*2);
+									flag = false;
+								}else {
+									st.push(tmp[i][j]);
+									flag = true;
+								}
 							}
 						}
 					}
 				}
+				while(!st.isEmpty()) {
+					int idx = n - st.size();
+					tmp[i][idx] = st.pop(); 
+				}
 			}
 		}
-		
+
 	}
 }
 // nxn 크기의 보드

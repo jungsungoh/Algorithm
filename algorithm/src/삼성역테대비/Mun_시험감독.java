@@ -9,16 +9,21 @@ public class Mun_시험감독 {
 		int[] test_place = new int[n];
 		for(int i=0; i<n; i++) {
 			test_place[i] = sc.nextInt(); // 각 시험장 응시자 수
-			
 		}
 		int b = sc.nextInt(); // 총감독관 관리가능
 		int c = sc.nextInt(); // 부감독관 관리 가능
-		
+		long num = 0;
 		for(int i=0; i<n; i++) {
-			
-			
-			
+			test_place[i]-= b;
+			num+=1;
+			if(test_place[i] <= 0) continue;
+			num += test_place[i]/c;
+			test_place[i] = test_place[i]%c;
+			if(test_place[i] != 0) {
+				num+=1;
+			}
 		}
+		System.out.println(num);
 	}
 }
 
