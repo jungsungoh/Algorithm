@@ -3,6 +3,7 @@ package 삼성역테대비;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -13,6 +14,7 @@ public class Mun_청소년상어 {
 	public static int[] dj = {0,0,-1,-1,-1,0,1,1,1};
 	public static fish[][] arr;
 	public static fish shark;
+	public static int sum = 0;
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		arr = new fish[4][4];
@@ -20,88 +22,105 @@ public class Mun_청소년상어 {
 		for(int i=0; i<4; i++) {
 			StringTokenizer st = new StringTokenizer(br.readLine());
 			for(int j=0; j<4; j++) {
-				arr[i][j]= new fish(i, j, Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()),0,false);
+				arr[i][j]= new fish(i, j, Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()),0);
 			}
 		}
 		// 상어 넣기
-		arr[0][0] = new fish(0,0,-1,arr[0][0].dir, arr[0][0].num, false);
+		arr[0][0] = new fish(0,0,-1,arr[0][0].dir, arr[0][0].num);
 		shark = arr[0][0];
-		// 물고기 이동
-		movingfish();
-		// 상어이동
+		movingfish(arr);
+		//movingShark(arr, shark);
+		System.out.println(sum);
 	}
-	public static void movingfish() {
+	// 물고기 이동
+	// 물고기는 번호가 작은 물고기부터 순서대로 이동한다.
+	// 물고기는 한 칸을 이동할 수 있고, 이동할 수 있는 칸은 빈 칸과 다른 물고기가 있는 칸, 이동할 수 없는 칸은 상어가 있거나, 공간의 경계를 넘는 칸이다.
+	// 각 물고기는 방향이 이동할 수 있는 칸을 향할 때까지 방향을 45도 반시계 회전시킨다. 만약, 이동할 수 있는 칸이 없으면 이동을 하지 않는다. 그 외의 경우에는 그 칸으로 이동을 한다.
+	//  물고기가 다른 물고기가 있는 칸으로 이동할 때는 서로의 위치를 바꾸는 방식으로 이동한다.
+	public static void movingfish(fish[][] arr2) {
 		PriorityQueue<Integer> pq = new PriorityQueue<>();
 		Map<Integer, fish> map = new HashMap<>();
 		// 물고기들만 pq에 넣는다. 상어나 빈자리는 않넣음
 		for(int i=0; i<4; i++) {
 			for(int j=0; j<4; j++) {
-				if(!arr[i][j].isEmpty && arr[i][j].num != -1) {
-					pq.add(arr[i][j].num);
-					map.put(arr[i][j].num, arr[i][j]);
+				if(arr2[i][j] != null && arr2[i][j].num > 0) {
+					pq.add(arr2[i][j].num);
+					map.put(arr2[i][j].num, arr2[i][j]);
 				}
 			}
 		}
 
-		while(!pq.isEmpty()) {
+		int size = pq.size();
+		for(int s=0; s<size; s++) {
 			int p = pq.poll();
 			fish f1 = map.get(p);
 			for(int k=0 ;k<8; k++) {
-				int ni = f1.x +di[f1.dir];
+				int ni = f1.x + di[f1.dir];
 				int nj = f1.y + dj[f1.dir];
-
-				if(ni>=0 && ni<4 && nj>=0 && nj<4 && (arr[ni][nj].isEmpty || arr[ni][nj].num != -1)) {
-					fish temp = arr[ni][nj];
-					arr[ni][nj] = new fish(ni, nj, f1.num, f1.dir,0,false);
-					map.put(f1.num,arr[ni][nj]);
-					if(!arr[ni][nj].isEmpty) {
-						arr[f1.x][f1.y]= new fish(f1.x, f1.y, temp.num, temp.dir, 0, false); 
-						map.put(temp.num, arr[f1.x][f1.y]);
-					}else {
-						arr[f1.x][f1.y]= new fish(f1.x, f1.y, f1.num,f1.dir, 0, true); 
+				if(ni>=0 && ni<4 && nj>=0 && nj<4 && (arr2[ni][nj] == null || arr2[ni][nj].num > -1)) {
+					if(arr2[ni][nj] == null) {
+						arr2[ni][nj] = new fish(ni, nj,f1.num,f1.dir,0);
+						map.put(f1.num,arr2[ni][nj]);
+						arr2[f1.x][f1.y]= null; 
+					}else if(arr2[ni][nj] != null) {
+						System.out.println(f1.num + " " + arr2[ni][nj].num);
+						fish newfish = new fish(f1.x,f1.y,arr2[ni][nj].num,arr2[ni][nj].dir, 0);
+						map.put(arr2[ni][nj].num, newfish);
+						fish myfish = new fish(ni, nj, f1.num, f1.dir,0);
+						arr2[ni][nj] = myfish;
+						map.put(f1.num,myfish);
 					}
 					break;
 				}
-				f1.dir--;
-				if(f1.dir == 0) {
-					f1.dir = 8;
+				f1.dir = f1.dir+1;
+				if(f1.dir == 9) {
+					f1.dir =1;
 				}
+				
 			}
 		}
 		for(int i=0; i<4; i++) {
 			for(int j=0; j<4; j++) {
-				System.out.print(arr[i][j].num + " ");
+				if(arr2[i][j] == null) {
+					System.out.print(0 + " ");
+				}else {
+					System.out.print(arr2[i][j].num + " ");
+				}
 			}System.out.println();
 		}
-
-
-
+		System.out.println("===========");
 	}
-	public static void movingShark() {
-		int ni = shark.x, nj = shark.y;
-		while(true) {
-			ni = ni +di[shark.dir];
-			nj = nj +dj[shark.dir];
-			if(!(ni>=0 && ni<4 && nj>=0 && nj<4) && (arr[ni][nj].isEmpty || arr[ni][nj].num == -1)) {
-				break;
-			}else {
-				arr[shark.x][shark.y].isEmpty = true; 
-				shark = new fish(ni, nj, -1,arr[ni][nj].dir, shark.sum+arr[ni][nj].num, false);
+	public static void movingShark(fish[][] arr2, fish sk) {
+		System.out.println(sk.sum);
+		sum = Math.max(sum, sk.sum);
+		movingfish(arr2);
+		
+		for(int dist =1; dist < 4; dist++) {
+			int ni = sk.x +di[sk.dir]*dist;
+			int nj = sk.y +dj[sk.dir]*dist;
+			if(ni>=0 && ni<4 && nj>=0 && nj<4 && (arr2[ni][nj] != null && arr2[ni][nj].num >0)) {
+				fish[][] temp = new fish[4][4];
+				for(int i=0; i<4; i++) {
+					temp[i] = Arrays.copyOf(arr2[i], 4);
+				}
+				temp[sk.x][sk.y] = null; 
+				fish newshark = new fish(ni,nj,-1,temp[ni][nj].dir, sk.sum+temp[ni][nj].num);
+				temp[ni][nj]= newshark; 
+				movingShark(temp, newshark);
 			}
 		}
 
 	}
 	public static class fish implements Comparable<fish>{
 		int x, y, num, dir, sum;
-		boolean isEmpty;
-		public fish(int x, int y, int num, int dir, int sum, boolean isEmpty) {
+
+		public fish(int x, int y, int num, int dir, int sum) {
 			super();
 			this.x = x;
 			this.y = y;
 			this.num = num;
 			this.dir = dir;
 			this.sum = sum;
-			this.isEmpty = isEmpty;
 		}
 		@Override
 		public int compareTo(fish o) {
@@ -119,11 +138,7 @@ public class Mun_청소년상어 {
 
 
 
-// 물고기 이동
-// 물고기는 번호가 작은 물고기부터 순서대로 이동한다.
-// 물고기는 한 칸을 이동할 수 있고, 이동할 수 있는 칸은 빈 칸과 다른 물고기가 있는 칸, 이동할 수 없는 칸은 상어가 있거나, 공간의 경계를 넘는 칸이다.
-// 각 물고기는 방향이 이동할 수 있는 칸을 향할 때까지 방향을 45도 반시계 회전시킨다. 만약, 이동할 수 있는 칸이 없으면 이동을 하지 않는다. 그 외의 경우에는 그 칸으로 이동을 한다.
-//  물고기가 다른 물고기가 있는 칸으로 이동할 때는 서로의 위치를 바꾸는 방식으로 이동한다.
+
 
 // 상어의 이동
 // 물고기의 이동이 모두 끝나면 상어가 이동한다. 

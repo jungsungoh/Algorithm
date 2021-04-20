@@ -6,22 +6,33 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class Mun_마법사상어와토네이도 {
-	public static int[][] percent = {{0, 0, 2, 0, 0},{0,10,7,1,0},{5,-1,-3,-2,0},{0,10,7,1,0},{0,0,2,0,0}};
-	public static int n ;
-	public static int[][] tonado;
+	public static int n, allsum = 0 ;
+	public static int[][] tonado, arr;
+	public static int[] percent = {1,1,7,7,2,2,10,10,5};
+	public static int[][] dx = {{-1,1,-1,1,-2,2,-1,1,0,0},{0,0,1,1,1,1,2,2,3,2},{-1,1,-1,1,-2,2,-1,1,0,0},{0,0,-1,-1,-1,-1,-2,-2,-3,-2}};
+	public static int[][] dy = {{0,0,-1,-1,-1,-1,-2,-2,-3,-2},{1,-1,1,-1,2,-2,1,-1,0,0},{0,0,1,1,1,1,2,2,3,2},{-1,1,1,-1,2,-2,1,-1,0,0}};
 	public static int[] di = {0,1,0,-1};
 	public static int[] dj = {-1,0,1,0};
+	
 	public static void main(String[] args) throws NumberFormatException, IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		n = Integer.parseInt(br.readLine());
-		int[][] arr = new int[n][n];
+		arr = new int[n][n];
 		for(int i=0; i<n; i++) {
 			StringTokenizer st = new StringTokenizer(br.readLine());
 			for(int j=0; j<n; j++) {
 				arr[i][j] = Integer.parseInt(st.nextToken());
 			}
 		}
+		
+		for(int i=0; i<n; i++) {
+			for(int j=0; j<n; j++) {
+				System.out.print(arr[i][j] + " ");
+			}System.out.println();
+		}
 		make_tonado();
+		
+		System.out.println(allsum);
 	}
 	public static void make_tonado() {
 		tonado = new int[n][n];
@@ -31,10 +42,18 @@ public class Mun_마법사상어와토네이도 {
 		while(true) {
 			for(int j=0; j<length; j++) {
 				tonado[startx][starty] = idx++;
-				if(idx == n*n+1) {
+				if(startx == 0 && starty==0) {
 					flag = 1;
 					break;
 				}
+				// 흩날리기
+				spread(startx,starty,k);
+//				for(int p=0; p<n; p++) {
+//					for(int p2=0; p2<n; p2++) {
+//						System.out.print(arr[p][p2] + " ");
+//					}System.out.println();
+//				}
+//				System.out.println("============");
 				startx+= di[k];
 				starty+= dj[k];
 			}
@@ -54,40 +73,45 @@ public class Mun_마법사상어와토네이도 {
 			}System.out.println();
 		}
 	}
-	public static int[][] rotate(int[][] arr, int dir) {
-		int[][] temp = new int[5][5];
-		for(int i=0; i<5; i++) {
-			for(int j=0; j<5; j++) {
-				switch(dir) {
-				case 0:
-					temp[i][j] = arr[n-1-j][i];
-					break;
-				case 1:
-					temp[i][j] = arr[n-1-i][n-1-j];
-					break;
-				case 2:
-					temp[i][j] = arr[j][n-1-i];
-					break;
-				case 3:
-					temp[i][j] = arr[i][j];
-					break;
-				}
+	// 좌, 상, 우, 하
+	public static void spread(int si, int sj, int dir) {
+//		int[] percent = {1,1,7,7,2,2,10,10,5};
+//		if(dir == 0) { 
+//			int[] dx = {-1,1,-1,1,-2,2,-1,1,0};
+//			int[] dy = {0,0,-1,-1,-1,-1,-2,-2,-3};
+//		}else if(dir==1) {
+//			int[] dx = {0,0,-1,-1,-1,-1,-2,-2,-3};
+//			int[] dy = {-1,1,1,-1,2,-2,1,-1,0};
+//		}else if(dir ==2) {
+//			int[] dx = {-1,1,-1,1,-2,2,-1,1,0};
+//			int[] dy = {0,0,1,1,1,1,2,2,3};
+//		}else if(dir ==3) {
+//			int[] dx = {0,0,1,1,1,1,2,2,3};
+//			int[] dy = {1,-1,1,-1,2,-2,1,-1,0};
+//		}
+		int sum = 0, dis =0;
+		int yang = arr[si][sj];
+		for(int k=0; k<9; k++) {
+			int ni = si + dx[dir][k];
+			int nj = sj + dy[dir][k];
+			if(ni>=0 && ni<n && nj>=0 && nj<n) {
+				arr[ni][nj] += (yang*(percent[k]/100));
+			}else {
+				dis += (yang*(percent[k]/100));
 			}
-		}
-		return temp;
-	}
-	public static void calc(int si, int sj, int dir) {
-		int[][] temp = new int[5][5];
-		if(dir == 0) {	
-			temp = rotate(percent,2);
-		}else if(dir == 1) {
-			temp = rotate(percent, 0);
-		}else if(dir == 2){
-			temp = rotate(percent, 1);
-		}else if(dir == 3) {
-			
+			sum += (yang*(percent[k]/100));
 		}
 		
+		int ni = si + dx[dir][9];
+		int nj = sj + dy[dir][9];
+		if(ni>=0 && ni<n && nj>=0 && nj<n) {
+			arr[ni][nj] += (yang-sum);
+		}else {
+			dis += (yang-sum);
+		}
+		arr[si][sj] = 0;
+		
+		allsum += dis;
 	}
 }
 
