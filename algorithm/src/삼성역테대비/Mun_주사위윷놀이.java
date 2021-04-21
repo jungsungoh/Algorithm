@@ -15,7 +15,6 @@ public class Mun_주사위윷놀이 {
 	public static mob[] mset;
 	public static int max = 0;
 	public static void main(String[] args) {
-		
 		Scanner sc = new Scanner(System.in);
 		timetable = new int[10];
 		for(int i=0; i<10; i++) {
@@ -45,6 +44,7 @@ public class Mun_주사위윷놀이 {
 				sum += mset[i].sum;
 			}
 			max = Math.max(sum,  max);
+			System.out.println(max);
 			return;
 		}
 		
