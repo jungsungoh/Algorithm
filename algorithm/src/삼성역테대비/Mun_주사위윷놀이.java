@@ -1,19 +1,17 @@
 package 삼성역테대비;
 
-import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Scanner;
 
 public class Mun_주사위윷놀이 {
 	public static ArrayList<Integer>[] al;
 	public static int[] timetable;
 	public static int[] select;
-	public static boolean[][] used;
-	public static mob[] mset;
+	public static boolean[] used;
 	public static int max = 0;
+	public static horse[] h;
+	public static Node start, end;
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
 		timetable = new int[10];
@@ -24,106 +22,146 @@ public class Mun_주사위윷놀이 {
 		select = new int[10];
 		permu(0);
 		System.out.println(max);
-		
+
 	}
 	public static void permu(int idx) {
 		if(idx == 10) {
-			mset = new mob[4];
-			for(int k=0; k<4; k++) {
-				mset[k] = new mob(0,0,0,0);
-			}
-			used = new boolean[4][22];
-			for(int i=0 ;i<10; i++) {
-				if(mset[select[i]].isEnd ==0) {
-					moving(mset[select[i]], timetable[i]);
-				}
-			}
-			
-			int sum = 0;
-			for(int i=0; i<4; i++) {
-				sum += mset[i].sum;
-			}
-			max = Math.max(sum,  max);
-			System.out.println(max);
+			max = Math.max(moving(),  max);
 			return;
 		}
-		
+
 		for(int i=0; i<4; i++) {
 			select[idx] = i;
 			permu(idx+1);
 		}
-		
+
 	}
-	
-	public static void moving(mob m1, int cnt) {
-		int tmp = m1.x;
-		int tmpy = m1.y;
-		int nj = m1.y + cnt;
-		m1.y = nj;
-		if(nj >= al[m1.x].size()) {
-			m1.y = al[m1.x].size()-1;
-			m1.isEnd = 1;
-		}else if(al[m1.x].get(nj) == 10) {
-			m1.x = 1;
-			m1.y = 0;
-		}else if(al[m1.x].get(nj) == 20) {
-			m1.x = 2;
-			m1.y = 0;
-		}else if(al[m1.x].get(nj) == 30) {
-			m1.x = 3;
-			m1.y = 0;
+
+	public static int moving() {
+		h = new horse[4];
+		for(int i=0; i<4; i++) {
+			h[i] = new horse(start,0);
 		}
-		// 만약 거기 이미 점거중. 원래 값으로 돌리기
-		if(al[m1.x].get(m1.y) != 0 && used[m1.x][m1.y] ) {
-			m1.x = tmp;
-			m1.y = tmpy;
-		}else { // 새로 가는곳이면 점거하고, 값 더하기.
-			used[m1.x][m1.y]= true; 
-			m1.sum += al[m1.x].get(m1.y);
-		}
+
+		int score = 0;
 		
-		
-	}
-	public static class mob{
-		int x, y, sum, isEnd;
-		public mob(int x, int y, int sum, int isEnd) {
-			super();
-			this.x = x;
-			this.y = y;
-			this.sum = sum;
-			this.isEnd = isEnd;
-		}
-	}
-	public static void init() {
-		// 시작 -1 도착 -2
-				int[] arr0 = {0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,0};
-				int[] arr1 = {10,13,16,19,25,30,35,40,0};
-				int[] arr2 = {20,22,24,25,30,35,40,0};
-				int[] arr3 = {30,28,27,26,25,30,35,40,0};
-				al = new ArrayList[4];
-				for(int i=0; i<4; i++) {
-					if(i == 0) {
-						al[i] = new ArrayList<>();
-						for(int j=0; j<arr0.length; j++) {
-							al[i].add(arr0[j]);
-						}
-					}else if(i == 1) {
-						al[i] = new ArrayList<>();
-						for(int j=0; j<arr1.length; j++) {
-							al[i].add(arr1[j]);
-						}
-					}else if(i == 2) {
-						al[i] = new ArrayList<>();
-						for(int j=0; j<arr2.length; j++) {
-							al[i].add(arr2[j]);
-						}
-					}else if(i == 3) {
-						al[i] = new ArrayList<>();
-						for(int j=0; j<arr3.length; j++) {
-							al[i].add(arr3[j]);
-						}
-					}
+		for(int i=0; i<10; i++) {
+			horse move_horse = h[select[i]];
+			Node cur = move_horse.present;
+			Node startn = move_horse.present;
+			for(int j=0; j<timetable[i]; j++) {
+				if(j ==0 && cur.hasFast) {
+					cur = cur.fastNode;
+				}else {
+					cur = cur.next;
 				}
-				// 윷놀이 판 만듬
+			}
+			if(!cur.isEmpty && !cur.isEnd) {
+				move_horse.present = startn;
+				score = 0;
+				break;
+			}else if(cur.isEnd) {
+				startn.isEmpty = true;
+				move_horse.present = cur;
+			}else {
+				startn.isEmpty = true;
+				move_horse.present = cur;
+				cur.isEmpty = false;
+				score += cur.score;
+			}
+		}
+		
+		
+		
+		for(int i=0; i<4; i++) {
+			h[i].present.isEmpty = true;
+		}
+		
+		return score;
+
+
+	}
+	public static class Node{
+		int  score;
+		Node next, fastNode;
+		boolean isEmpty, isEnd, hasFast;
+		public Node(int score) {
+			super();
+			this.score = score;
+			this.isEmpty = true;
+		}
+
+		public Node nextNode(int idx) {
+			next = new Node(idx);
+			return next;
+		}
+		public Node fastNode(int idx) {
+			fastNode = new Node(idx);
+			return fastNode;
+		}
+		public Node getNode(int target) {
+			Node pre = start;
+			while(true) {
+				if(pre == null) {
+					return null;
+				}
+				if(pre.score == target) {
+					return pre;
+				}
+				pre = pre.next;
+			}
+		}
+	}
+	public static class horse{
+		int sum;
+		Node present;
+		public horse(Node present, int sum) {
+			super();
+			this.present = present;
+			this.sum = sum;
+		}
+
+	}
+
+	public static void init() {
+		start = new Node(0);
+
+		Node temp = start;
+		for(int i=2; i<=40; i+=2) {
+			temp = temp.nextNode(i);
+		}
+		
+		Node end = temp.nextNode(0);
+		end.isEnd = true;
+		end.next = end;
+		
+		Node centerNode = new Node(25);
+		
+		temp = centerNode.nextNode(30);
+		temp = temp.nextNode(35);
+		temp.next = temp.getNode(40);
+		
+		
+		temp = start.getNode(10);
+		temp.hasFast = true;
+		temp = temp.fastNode(13);
+		temp = temp.nextNode(16);
+		temp = temp.nextNode(19);
+		temp.next = centerNode;
+
+		temp = start.getNode(20);
+		temp.hasFast = true;
+		temp = temp.fastNode(22);
+		temp = temp.nextNode(24);
+		temp.next = centerNode;
+
+
+		temp = start.getNode(30);
+		temp.hasFast = true;
+		temp= temp.fastNode(28);
+		temp = temp.nextNode(27);
+		temp = temp.nextNode(26);
+		temp.next = centerNode;
+		// 윷놀이 판 만듬
 	}
 }

@@ -48,12 +48,6 @@ public class Mun_마법사상어와토네이도 {
 				}
 				// 흩날리기
 				spread(startx,starty,k);
-//				for(int p=0; p<n; p++) {
-//					for(int p2=0; p2<n; p2++) {
-//						System.out.print(arr[p][p2] + " ");
-//					}System.out.println();
-//				}
-//				System.out.println("============");
 				startx+= di[k];
 				starty+= dj[k];
 			}
@@ -75,43 +69,30 @@ public class Mun_마법사상어와토네이도 {
 	}
 	// 좌, 상, 우, 하
 	public static void spread(int si, int sj, int dir) {
-//		int[] percent = {1,1,7,7,2,2,10,10,5};
-//		if(dir == 0) { 
-//			int[] dx = {-1,1,-1,1,-2,2,-1,1,0};
-//			int[] dy = {0,0,-1,-1,-1,-1,-2,-2,-3};
-//		}else if(dir==1) {
-//			int[] dx = {0,0,-1,-1,-1,-1,-2,-2,-3};
-//			int[] dy = {-1,1,1,-1,2,-2,1,-1,0};
-//		}else if(dir ==2) {
-//			int[] dx = {-1,1,-1,1,-2,2,-1,1,0};
-//			int[] dy = {0,0,1,1,1,1,2,2,3};
-//		}else if(dir ==3) {
-//			int[] dx = {0,0,1,1,1,1,2,2,3};
-//			int[] dy = {1,-1,1,-1,2,-2,1,-1,0};
-//		}
 		int sum = 0, dis =0;
 		int yang = arr[si][sj];
 		for(int k=0; k<9; k++) {
 			int ni = si + dx[dir][k];
 			int nj = sj + dy[dir][k];
+			
+			int temp = (yang * percent[k]) / 100;
+			yang -= temp;
 			if(ni>=0 && ni<n && nj>=0 && nj<n) {
-				arr[ni][nj] += (yang*(percent[k]/100));
+				arr[ni][nj] += temp;
 			}else {
-				dis += (yang*(percent[k]/100));
+				allsum+= temp;
 			}
-			sum += (yang*(percent[k]/100));
 		}
 		
 		int ni = si + dx[dir][9];
 		int nj = sj + dy[dir][9];
 		if(ni>=0 && ni<n && nj>=0 && nj<n) {
-			arr[ni][nj] += (yang-sum);
+			arr[ni][nj] += yang;
 		}else {
-			dis += (yang-sum);
+			allsum += yang;
 		}
 		arr[si][sj] = 0;
 		
-		allsum += dis;
 	}
 }
 

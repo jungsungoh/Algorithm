@@ -12,34 +12,34 @@ import java.util.StringTokenizer;
 public class Mun_새로운게임2 {
 	public static int n, m, check = 0;
 	public static int[][] arr;
-	public static ArrayList<horse>[][] status;
+	public static ArrayList<Integer>[][] status;
 	public static int[] di = {0,0,0,-1,1};
 	public static int[] dj = {0,1,-1,0,0};
-	public static Queue<horse> q;
+	public static horse[] horse_status ;
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String l1 = br.readLine();
 		n = Integer.parseInt(l1.split(" ")[0]);
 		m = Integer.parseInt(l1.split(" ")[1]);
 
-		arr = new int[n][n];
-		status = new ArrayList[n][n];
+		arr = new int[n+1][n+1];
+		status = new ArrayList[n+1][n+1];
 
-		for(int i=0; i<n; i++) {
+		for(int i=1; i<=n; i++) {
 			StringTokenizer st = new StringTokenizer(br.readLine());
-			for(int j=0; j<n; j++) {
+			for(int j=1; j<=n; j++) {
 				arr[i][j] = Integer.parseInt(st.nextToken());
 				status[i][j] = new ArrayList<>();
 			}
 		}
-		q = new LinkedList<>();
+		horse_status = new horse[m+1];
 		for(int k =1; k<=m; k++) {
 			StringTokenizer st = new StringTokenizer(br.readLine());
 			int v1 = Integer.parseInt(st.nextToken());
 			int v2 = Integer.parseInt(st.nextToken());
 			int dir = Integer.parseInt(st.nextToken());
-			status[v1-1][v2-1].add(new horse(v1-1,v2-1,k, dir));
-			q.add(new horse(v1-1, v2-1, k, dir));
+			status[v1][v2].add(k);
+			horse_status[k] = new horse(v1, v2, k, dir);
 		}
 		int flag = 0, turn = 1;
 		while(true) {
@@ -47,9 +47,8 @@ public class Mun_새로운게임2 {
 				System.out.println(-1);
 				return;
 			}
-			int size = q.size();
-			for(int s = 0; s<size; s++) {
-				moving(q.poll());
+			for(int s = 1; s<=m; s++) {
+				moving(horse_status[s]);
 				if(check == 1) {
 					flag = 1;
 					break;
@@ -58,6 +57,7 @@ public class Mun_새로운게임2 {
 			if(flag == 1) {
 				break;
 			}
+			
 			turn++;
 		}
 		System.out.println(turn);
@@ -65,7 +65,12 @@ public class Mun_새로운게임2 {
 	public static void moving(horse h) {
 		int ni = h.x + di[h.dir];
 		int nj = h.y + dj[h.dir];
-		if(ni>=0 && ni<n && nj>=0 && nj<n && arr[ni][nj] !=2) {
+		if(ni >n || ni <1 || nj >n || nj < 1 || arr[ni][nj] == 2) {
+			movingblue(h);
+			ni = h.x +di[h.dir];
+			nj = h.y +dj[h.dir];
+		}
+		if(ni>=1 && ni<=n && nj>=1 && nj<=n && arr[ni][nj] !=2) {
 			if(arr[ni][nj] == 0) { // 흰색
 				movingWhite(h, ni, nj);
 			}else if(arr[ni][nj] == 1) {
@@ -75,85 +80,63 @@ public class Mun_새로운게임2 {
 				check = 1;
 				return;
 			}
-		}else {
-			movingblue(h);
 		}
 	}
-	
+
 	public static void movingWhite(horse h, int ni, int nj) {
-		int idx = -1;
-		for(int i=0; i<status[h.x][h.y].size(); i++) {
-			horse find = status[h.x][h.y].get(i);
-			if(find.idx == h.idx) {
-				idx = i;
+		ArrayList<Integer> from =status[h.x][h.y];
+		ArrayList<Integer> to = status[ni][nj];
+		int start= -1;
+		for(int i=0; i<from.size(); i++) {
+			if(from.get(i) == h.idx) {
+				start = i;
 				break;
 			}
 		}
-		int size = status[h.x][h.y].size();
-		for(int i=idx; i<size;i++) {
-			horse find = status[h.x][h.y].get(idx);
-			status[h.x][h.y].remove(idx);
-			status[ni][nj].add(new horse(ni,nj,find.idx,find.dir));
+		int size = from.size();
+		for(int i=start; i<size;i++) {
+			int h_num = from.get(i);
+			to.add(h_num);
+			horse_status[h_num].x = ni;
+			horse_status[h_num].y = nj;
 		}
-		q.add(new horse(ni,nj, h.idx, h.dir));
+		for(int i=size-1; i>=start; i--) {
+			from.remove(i);
+		}
 	}
-	
+
 	public static void movingRed(horse h, int ni, int nj) {
-		int idx = -1;
-		for(int i=0; i<status[h.x][h.y].size(); i++) {
-			horse find = status[h.x][h.y].get(i);
-			if(find.idx == h.idx) {
-				idx = i;
+		ArrayList<Integer> from =status[h.x][h.y];
+		ArrayList<Integer> to = status[ni][nj];
+		int start= -1;
+		for(int i=0; i<from.size(); i++) {
+			if(from.get(i) == h.idx) {
+				start = i;
 				break;
 			}
 		}
-		Stack<horse> st = new Stack<>();
-		int size = status[h.x][h.y].size();
-		for(int i=idx; i<size;i++) {
-			horse find = status[h.x][h.y].get(idx);
-			status[h.x][h.y].remove(idx);
-			st.push(new horse(ni,nj,find.idx,find.dir));
+		int size = from.size();
+		for(int i=size-1; i>=start;i--) {
+			int h_num = from.get(i);
+			to.add(h_num);
+			horse_status[h_num].x = ni;
+			horse_status[h_num].y = nj;
 		}
-		while(!st.isEmpty()) {
-			status[ni][nj].add(st.pop());
+		for(int i=size-1; i>=start; i--) {
+			from.remove(i);
 		}
-		q.add(new horse(ni,nj,h.idx, h.dir));
 	}
 	public static void movingblue(horse h) {
-		if(h.dir == 1) h.dir =2;
-		else if(h.dir == 2) h.dir =1;
-		else if(h.dir ==3) h.dir=4;
-		else if(h.dir ==4) h.dir =3;
-		int ni = h.x +di[h.dir];
-		int nj = h.y +dj[h.dir];
-		if(ni>=0 && ni<n && nj>=0 && nj<n && arr[ni][nj] !=2) {
-			// 이동
-			if(arr[ni][nj] == 0) { // 흰색
-				movingWhite(h, ni, nj);
-			}else if(arr[ni][nj] == 1) {
-				movingRed(h,ni,nj);
-			}
-			if(status[ni][nj].size() >=4) {
-				check = 1;
-				return;
-			}
-		}else {
-			// 이동안하고 가만히 있음
-			ArrayList<horse> al = status[h.x][h.y];
-			int size = al.size();
-			for(int i=0; i<size; i++) {
-				horse find = al.get(i);
-				if(find.idx == h.idx) {
-					al.remove(i);
-					status[h.x][h.y].add(i, new horse(h.x, h.y, h.idx, h.dir));
-					break;
-				}
-			}
-			q.add(new horse(h.x,h.y,h.idx,h.dir));
+		if(h.dir == 1) {
+			horse_status[h.idx].dir = 2;
+		}else if(h.dir == 2) {
+			horse_status[h.idx].dir = 1;
+		}else if(h.dir ==3) {
+			horse_status[h.idx].dir = 4;
+		}else if(h.dir ==4) {
+			horse_status[h.idx].dir = 3;
 		}
 	}
-
-
 	public static class horse{
 		int x, y , idx, dir;
 
@@ -165,9 +148,6 @@ public class Mun_새로운게임2 {
 			this.dir = dir;
 		}
 	}
-
-
-
 }	
 
 

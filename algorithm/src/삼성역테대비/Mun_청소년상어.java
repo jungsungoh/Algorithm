@@ -28,8 +28,7 @@ public class Mun_청소년상어 {
 		// 상어 넣기
 		arr[0][0] = new fish(0,0,-1,arr[0][0].dir, arr[0][0].num);
 		shark = arr[0][0];
-		movingfish(arr);
-		//movingShark(arr, shark);
+		movingShark(arr, shark);
 		System.out.println(sum);
 	}
 	// 물고기 이동
@@ -54,6 +53,7 @@ public class Mun_청소년상어 {
 		for(int s=0; s<size; s++) {
 			int p = pq.poll();
 			fish f1 = map.get(p);
+			int flag = 0;
 			for(int k=0 ;k<8; k++) {
 				int ni = f1.x + di[f1.dir];
 				int nj = f1.y + dj[f1.dir];
@@ -63,50 +63,55 @@ public class Mun_청소년상어 {
 						map.put(f1.num,arr2[ni][nj]);
 						arr2[f1.x][f1.y]= null; 
 					}else if(arr2[ni][nj] != null) {
-						System.out.println(f1.num + " " + arr2[ni][nj].num);
-						fish newfish = new fish(f1.x,f1.y,arr2[ni][nj].num,arr2[ni][nj].dir, 0);
-						map.put(arr2[ni][nj].num, newfish);
-						fish myfish = new fish(ni, nj, f1.num, f1.dir,0);
-						arr2[ni][nj] = myfish;
-						map.put(f1.num,myfish);
+						arr2[f1.x][f1.y]= new fish(f1.x, f1.y, arr2[ni][nj].num, arr2[ni][nj].dir,0); 
+						map.put(arr2[ni][nj].num, arr2[f1.x][f1.y]);
+						arr2[ni][nj] = new fish(ni,nj, f1.num, f1.dir, 0);
+						map.put(f1.num,arr2[ni][nj]);
 					}
+					flag = 1;
+					break;
+				}
+				if(flag == 1) {
 					break;
 				}
 				f1.dir = f1.dir+1;
 				if(f1.dir == 9) {
 					f1.dir =1;
 				}
-				
 			}
 		}
-		for(int i=0; i<4; i++) {
-			for(int j=0; j<4; j++) {
-				if(arr2[i][j] == null) {
-					System.out.print(0 + " ");
-				}else {
-					System.out.print(arr2[i][j].num + " ");
-				}
-			}System.out.println();
-		}
-		System.out.println("===========");
+		
 	}
 	public static void movingShark(fish[][] arr2, fish sk) {
 		System.out.println(sk.sum);
 		sum = Math.max(sum, sk.sum);
 		movingfish(arr2);
 		
-		for(int dist =1; dist < 4; dist++) {
-			int ni = sk.x +di[sk.dir]*dist;
-			int nj = sk.y +dj[sk.dir]*dist;
-			if(ni>=0 && ni<4 && nj>=0 && nj<4 && (arr2[ni][nj] != null && arr2[ni][nj].num >0)) {
-				fish[][] temp = new fish[4][4];
-				for(int i=0; i<4; i++) {
-					temp[i] = Arrays.copyOf(arr2[i], 4);
+		fish[][] temp = new fish[4][4];
+		fish tempShark = null;
+		for(int i=0; i<4; i++) {
+			for(int j=0; j<4; j++) {
+				temp[i][j] = arr2[i][j];
+				if(temp[i][j] != null && temp[i][j].num == -1) {
+					tempShark = temp[i][j];
 				}
-				temp[sk.x][sk.y] = null; 
-				fish newshark = new fish(ni,nj,-1,temp[ni][nj].dir, sk.sum+temp[ni][nj].num);
-				temp[ni][nj]= newshark; 
-				movingShark(temp, newshark);
+			}
+		}
+		for(int dist =1; dist < 4; dist++) {
+			int ni = tempShark.x +di[tempShark.dir]*dist;
+			int nj = tempShark.y +dj[tempShark.dir]*dist;
+			if(ni>=0 && ni<4 && nj>=0 && nj<4 && (arr2[ni][nj] != null && arr2[ni][nj].num >0)) {
+				for(int i=0; i<4; i++) {
+					for(int j=0; j<4; j++) {
+						temp[i][j] = arr2[i][j];
+						if(temp[i][j] != null && temp[i][j].num == -1) {
+							tempShark = temp[i][j];
+						}
+					}
+				}
+				temp[tempShark.x][tempShark.y] = null; 
+				temp[ni][nj] = new fish(ni,nj,-1,temp[ni][nj].dir, tempShark.sum+temp[ni][nj].num);
+				movingShark(temp, temp[ni][nj]);
 			}
 		}
 
