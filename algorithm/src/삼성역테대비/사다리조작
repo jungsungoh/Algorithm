@@ -1,0 +1,36 @@
+
+사다리 게임은 N개의 세로선과 M개의 가로선으로 이루어져 있다.
+
+인접한 세로선 사이에는 가로선을 놓을 수 있는데, 각각의 세로선마다 가로선을 놓을 수 있는 위치의 개수는 H이고, 
+모든 세로선이 같은 위치를 갖는다.
+가로선은 인접한 두 세로선을 연결해야 한다. 단, 두 가로선이 연속하거나 서로 접하면 안 된다. 
+
+
+
+
+result
+사다리에 가로선을 추가해서, 사다리 게임의 결과를 조작하려고 한다. 이때, i번 세로선의 결과가 i번이 나와야 한다. 
+그렇게 하기 위해서 추가해야 하는 가로선 개수의 최솟값을 구하는 프로그램을 작성하시오.
+
+
+public static void dfs(int cnt, int idx) {
+		if(cnt > 4) return;
+		if(idx == endpoint) {
+			if(run()) {
+				result = Math.min(cnt,  result);
+				System.out.println("뭐야");
+			}
+			return;
+		}
+		for(int i = idx ; i<endpoint; i++) {
+			int si = i/(n-1);
+			int sj = i%(n-1);
+			if(arr[si][sj] != 1 ) {
+				if(sj >=1 && arr[si][sj-1] == 1) continue;
+				if(sj < n-2 && arr[si][sj+1] ==1) continue;
+				arr[si][sj] = 1;
+				dfs(cnt+1, i+1);
+				arr[si][sj] = 0;
+			}
+		}
+	}
