@@ -2,6 +2,8 @@ package 카카오인턴2020;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Mun_동굴탐험 {
 	public static ArrayList<Integer>[] al, pre;
@@ -28,6 +30,7 @@ public class Mun_동굴탐험 {
         	int v1 = path[i][0];
         	int v2 = path[i][1];
         	al[v1].add(v2);
+        	al[v2].add(v1);
         }
         
         for(int i=0; i<order.length; i++) {
@@ -36,18 +39,25 @@ public class Mun_동굴탐험 {
         	pre[v1].add(v2);
         	pre_cnt[v2]++;
         }
-        dfs(0, 1, n);
         
         return answer;
     }
-	public static void dfs(int num, int cnt, int n) {
-		System.out.println(num);
-		if(al[num].size() == 0) {
-			return;
-		}
+	public static void bfs() {
+		Queue<Integer> q = new LinkedList<>();
+		q.add(0);
+		visited[0] = true;
 		
-		for(Integer x : al[num]) {
-			dfs(x, cnt+1, n);
+		
+		while(!q.isEmpty()) {
+			int i = q.poll();
+			
+			for(Integer next : al[i]) {
+				if(!visited[next] && pre_cnt[next] != 0) {
+					
+				}
+			}
+			
+			
 		}
 	}
 }
