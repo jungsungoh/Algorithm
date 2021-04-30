@@ -19,17 +19,18 @@ public class Mun_주몽 {
 	}
 	public static void twopoint(int[] arr, int m, int n) {
 		
-		int start = 0, end = 0;
+		int start = 0, end = n-1;
 		int cnt = 0;
-		while(true) {
-			if(end >= n) break;
-			if(arr[start] + arr[end] == m) {
-				end++;
-				cnt++;
-			}else if(arr[start] + arr[end] > m) {
+		while(start<end) {
+			int sum = arr[start] + arr[end];
+			if(sum == m) {
 				start++;
-			}else if(arr[start] + arr[end] < m) {
-				end++;
+				end--;
+				cnt++;
+			}else if(sum > m) {
+				end--;
+			}else if(sum < m) {
+				start++;
 			}
 		}
 		System.out.println(cnt);
