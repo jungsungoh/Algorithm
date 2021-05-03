@@ -1,8 +1,55 @@
 package 카카오2019;
 
+import java.util.Arrays;
+
 public class Mun_징검다리건너기 {
 	public static void main(String[] args) {
+		int k =3;
+		int[] stones = {2, 4, 5, 3, 2, 1, 4, 2, 5, 1};
+		solution(stones, k);
+	}
+	public static int solution(int[] stones, int k) {
+		int answer = 0;
+		int min = Integer.MAX_VALUE;
+		for(int i=0; i<stones.length; i++) {
+			min = Math.min(min, stones[i]);
+		}
+		for(int i=0; i<stones.length; i++) {
+			stones[i] -= min;
+		}
 		
+		boolean ispossible = true;
+		int cnt = min;
+		while(ispossible) {
+			int idx = -1;
+			for(int i=0; i<stones.length; i++) {
+				int flag = 0;
+				for(int p=1; p<=k; p++) {
+					int next = idx+p;
+					if(next >= stones.length) {
+						flag = 1;
+						idx = stones.length;
+						break;
+					}else if(next < stones.length && stones[next] >= 1) {
+						stones[next]--;
+						flag = 1;
+						idx = next;
+						break;
+					}
+				}
+				if(flag == 0) {
+					ispossible = false;
+					break;
+				}
+				i = idx;
+			}
+			if(ispossible) {
+				cnt++;
+			}
+		}
+		answer = cnt;
+		System.out.println(cnt);
+		return answer;
 	}
 }
 // 징검다리는 일렬로 놓여 있고 각 징검다리의 디딤돌에는 

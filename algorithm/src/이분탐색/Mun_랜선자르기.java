@@ -1,47 +1,54 @@
 package 이분탐색;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
+import java.util.Arrays;
+import java.util.Scanner;
 
 public class Mun_랜선자르기 {
-	public static int n, find, max = 0;
-	public static long answer = 0;
 	public static int[] arr;
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		String l1 = br.readLine();
-		n = Integer.parseInt(l1.split(" ")[0]);
-		find = Integer.parseInt(l1.split(" ")[1]);
+	public static int n, k, maxval;
+	public static void main(String[] args) {
 		
-		arr = new int[n];
+		Scanner sc = new Scanner(System.in);
 		
-		max = 0;
-		for(int i=0; i<n; i++) {
-			int length = Integer.parseInt(br.readLine());
-			arr[i] = length;
-			max = Math.max(length, max);
+		k = sc.nextInt(); // 필요한 랜선 개수
+		n = sc.nextInt(); // 이미 가지고 있는 랜선 개수
+		
+		
+		arr = new int[k];
+		for(int i=0; i<k; i++) {
+			arr[i] = sc.nextInt();
 		}
-		answer = binary_search();
-		System.out.println(answer);
+		Arrays.sort(arr);
+		binarySearch();
+		
+		
 	}
-	public static long binary_search() {
-		long start = 1;
-		long end = max;
+	public static void binarySearch() {
+		
+		long start = 0, end = Long.MAX_VALUE;
+		long max = 0;
 		while(start <= end) {
-			long count = 0;
 			long mid = (start+end)/2;
-			for(int i=0; i<arr.length; i++) {
-				count += arr[i] / mid;
-			}
-			
-			if(count >= find) {
+			if(check(mid)) {
+				max = Math.max(max,  mid);
 				start = mid+1;
 			}else {
-				end = mid -1;
+				end = mid-1;
 			}
 		}
-		return start;
+		System.out.println(max);
+	}
+	
+	public static boolean check(long target) {
+		if(target == 0) return false;
+		long cnt = 0;
+		for(int i=0; i<k;i++) {
+			cnt += (arr[i]/target);
+		}
+		if(cnt >= n) {
+			return true;
+		}else {
+			return false;
+		}
 	}
 }
